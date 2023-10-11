@@ -1,3 +1,0 @@
-repository='https://github.com/cesanta/mongoose.git'
-module=''
-tag='origin'

@@ -1,2 +1,0 @@
-/usr/bin/ar qc libcxxopts.a 
-/usr/bin/ranlib libcxxopts.a
