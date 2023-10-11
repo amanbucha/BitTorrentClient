@@ -1,7 +1,3 @@
-//
-// Created by siyuan on 04/05/2021.
-//
-
 #include <string>
 #include <iostream>
 #include <cpr/cpr.h>

@@ -1,7 +1,3 @@
-//
-// Created by siyuan on 13/05/2021.
-//
-
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <stdexcept>

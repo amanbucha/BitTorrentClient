@@ -24,10 +24,10 @@ class BString;
 /**
 * @brief Exception thrown when there is an error during the decoding.
 */
-class DecodingError: public std::runtime_error {
-public:
-	explicit DecodingError(const std::string &what);
-};
+// class DecodingError: public std::runtime_error {
+// public:
+// 	explicit DecodingError(const std::string &what);
+// };
 
 /**
 * @brief Decoder of bencoded data.

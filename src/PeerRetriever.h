@@ -1,7 +1,3 @@
-//
-// Created by siyuan on 04/05/2021.
-//
-
 #ifndef BITTORRENTCLIENT_PEERRETRIEVER_H
 #define BITTORRENTCLIENT_PEERRETRIEVER_H
 

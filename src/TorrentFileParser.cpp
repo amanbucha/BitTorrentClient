@@ -1,6 +1,3 @@
-//
-// Created by Siyuan Shen on 2021/5/1.
-//
 #include <regex>
 #include <fstream>
 #include <iostream>

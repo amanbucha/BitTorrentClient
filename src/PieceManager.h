@@ -1,7 +1,3 @@
-//
-// Created by siyuan on 17/05/2021.
-//
-
 #ifndef BITTORRENTCLIENT_PIECEMANAGER_H
 #define BITTORRENTCLIENT_PIECEMANAGER_H
 

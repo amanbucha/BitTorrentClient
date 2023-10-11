@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../../../lib/libtest_server.a CMakeFiles/test_server.dir/abstractServer.cpp.o CMakeFiles/test_server.dir/httpServer.cpp.o CMakeFiles/test_server.dir/httpsServer.cpp.o
+/usr/bin/ranlib ../../../lib/libtest_server.a

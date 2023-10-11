@@ -1,7 +1,3 @@
-//
-// Created by siyuan on 15/06/2021.
-//
-
 #ifndef BITTORRENTCLIENT_SHAREDQUEUE_H
 #define BITTORRENTCLIENT_SHAREDQUEUE_H
 

@@ -1,7 +1,3 @@
-//
-// Created by siyuan on 13/05/2021.
-//
-
 #include <random>
 #include <iostream>
 #include <thread>

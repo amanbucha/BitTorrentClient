@@ -1,7 +1,3 @@
-//
-// Created by Siyuan Shen on 2021/5/1.
-//
-
 #ifndef BITTORRENTCLIENT_TORRENTFILEPARSER_H
 #define BITTORRENTCLIENT_TORRENTFILEPARSER_H
 #include <string>

@@ -1,7 +1,3 @@
-//
-// Created by siyuan on 13/05/2021.
-//
-
 #ifndef BITTORRENTCLIENT_TORRENTCLIENT_H
 #define BITTORRENTCLIENT_TORRENTCLIENT_H
 

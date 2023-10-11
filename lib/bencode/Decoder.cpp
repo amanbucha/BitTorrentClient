@@ -10,6 +10,7 @@
 #include <cassert>
 #include <regex>
 #include <sstream>
+#include <iostream>
 
 #include "BDictionary.h"
 #include "BInteger.h"
@@ -22,8 +23,8 @@ namespace bencoding {
 /**
 * @brief Constructs a new exception with the given message.
 */
-DecodingError::DecodingError(const std::string &what):
-	std::runtime_error(what) {}
+// DecodingError::DecodingError(const std::string &what):
+// 	std::runtime_error(what) {}
 
 /**
 * @brief Constructs a decoder.
@@ -77,7 +78,7 @@ std::unique_ptr<BItem> Decoder::decode(std::istream &input) {
 		case '9':
 			return decodeString(input);
 		default:
-			throw DecodingError(std::string("unexpected character: '") +
+			std::cout<<(std::string("unexpected character: '") +
 				static_cast<char>(input.peek()) + "'");
 	}
 
@@ -91,7 +92,7 @@ std::unique_ptr<BItem> Decoder::decode(std::istream &input) {
 void Decoder::readExpectedChar(std::istream &input, char expected_char) const {
 	int c = input.get();
 	if (c != expected_char) {
-		throw DecodingError(std::string("expected '") + expected_char +
+		std::cout<<(std::string("expected '") + expected_char +
 			"', got '" + static_cast<char>(c) + "'");
 	}
 }
@@ -147,7 +148,7 @@ std::shared_ptr<BString> Decoder::decodeDictionaryKey(std::istream &input) {
 	// A dictionary key has to be a string.
 	std::shared_ptr<BString> keyAsBString(key->as<BString>());
 	if (!keyAsBString) {
-		throw DecodingError(
+		std::cout<<(
 			"found a dictionary key that is not a bencoded string"
 		);
 	}
@@ -191,7 +192,7 @@ std::string Decoder::readEncodedInteger(std::istream &input) const {
 	std::string encodedInteger;
 	bool encodedIntegerReadCorrectly = readUntil(input, encodedInteger, 'e');
 	if (!encodedIntegerReadCorrectly) {
-		throw DecodingError("error during the decoding of an integer near '" +
+		std::cout<<("error during the decoding of an integer near '" +
 			encodedInteger + "'");
 	}
 
@@ -208,7 +209,7 @@ std::unique_ptr<BInteger> Decoder::decodeEncodedInteger(
 	std::smatch match;
 	bool valid = std::regex_match(encodedInteger, match, integerRegex);
 	if (!valid) {
-		throw DecodingError("encountered an encoded integer of invalid format: '" +
+		std::cout<<("encountered an encoded integer of invalid format: '" +
 			encodedInteger + "'");
 	}
 
@@ -276,14 +277,14 @@ std::string::size_type Decoder::readStringLength(std::istream &input) const {
 	std::string stringLengthInASCII;
 	bool stringLengthInASCIIReadCorrectly = readUpTo(input, stringLengthInASCII, ':');
 	if (!stringLengthInASCIIReadCorrectly) {
-		throw DecodingError("error during the decoding of a string near '" +
+		std::cout<<("error during the decoding of a string near '" +
 			stringLengthInASCII + "'");
 	}
 
 	std::string::size_type stringLength;
 	bool stringLengthIsValid = strToNum(stringLengthInASCII, stringLength);
 	if (!stringLengthIsValid) {
-		throw DecodingError("invalid string length: '" + stringLengthInASCII + "'");
+		std::cout<<("invalid string length: '" + stringLengthInASCII + "'");
 	}
 
 	return stringLength;
@@ -298,7 +299,7 @@ std::string Decoder::readStringOfGivenLength(std::istream &input,
 	input.read(&str[0], length);
 	std::string::size_type numOfReadChars(input.gcount());
 	if (numOfReadChars != length) {
-		throw DecodingError("expected a string containing " + std::to_string(length) +
+		std::cout<<("expected a string containing " + std::to_string(length) +
 			" characters, but read only " + std::to_string(numOfReadChars) +
 			" characters");
 	}
@@ -310,7 +311,7 @@ std::string Decoder::readStringOfGivenLength(std::istream &input,
 */
 void Decoder::validateInputDoesNotContainUndecodedCharacters(std::istream &input) {
 	if (input.peek() != std::char_traits<char>::eof()) {
-		throw DecodingError("input contains undecoded characters");
+		std::cout<<("input contains undecoded characters");
 	}
 }
 
