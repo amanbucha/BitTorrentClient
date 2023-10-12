@@ -5,7 +5,6 @@
 #include <stdexcept>
 #include <bitset>
 #include <bencode/bencoding.h>
-#include <loguru/loguru.hpp>
 #include <utility>
 
 #include "utils.h"
@@ -62,8 +61,6 @@ std::vector<Peer*> PeerRetriever::retrievePeers(unsigned long bytesDownloaded)
     info << "left: " << std::to_string(fileSize - bytesDownloaded) << std::endl;
     info << "compact: " << std::to_string(1);
 
-    LOG_F(INFO, "%s", info.str().c_str());
-
     cpr::Response res = cpr::Get(cpr::Url{announceUrl}, cpr::Parameters {
             { "info_hash", std::string(hexDecode(infoHash)) },
             { "peer_id", std::string(peerId) },
@@ -78,16 +75,12 @@ std::vector<Peer*> PeerRetriever::retrievePeers(unsigned long bytesDownloaded)
     // If response successfully retrieved
     if (res.status_code == 200)
     {
-        LOG_F(INFO, "Retrieve response from tracker: SUCCESS");
-//        std::shared_ptr<bencoding::BItem> decodedResponse = bencoding::decode(res.text);
-//        std::string formattedResponse = bencoding::getPrettyRepr(decodedResponse);
-//        std::cout << formattedResponse << std::endl;
         std::vector<Peer*> peers = decodeResponse(res.text);
         return peers;
     }
     else
     {
-        LOG_F(ERROR, "Retrieving response from tracker: FAILED [ %d: %s ]", res.status_code, res.text.c_str());
+        std::cout<<"Retrieving response from tracker: FAILED\n";
     }
     return std::vector<Peer*>();
 }
@@ -101,7 +94,6 @@ std::vector<Peer*> PeerRetriever::retrievePeers(unsigned long bytesDownloaded)
  * other two files.
  */
 std::vector<Peer*> PeerRetriever::decodeResponse(std::string response) {
-    LOG_F(INFO, "Decoding tracker response...");
     std::shared_ptr<bencoding::BItem> decodedResponse = bencoding::decode(response);
 
     std::shared_ptr<bencoding::BDictionary> responseDict =
@@ -173,8 +165,6 @@ std::vector<Peer*> PeerRetriever::decodeResponse(std::string response) {
         throw std::runtime_error(
                 "Response returned by the tracker is not in the correct format. ['peers' has the wrong type]");
     }
-    LOG_F(INFO, "Decode tracker response: SUCCESS");
-    LOG_F(INFO, "Number of peers discovered: %zu", peers.size());
     return peers;
 }
 

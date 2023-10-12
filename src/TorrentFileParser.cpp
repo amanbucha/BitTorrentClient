@@ -7,8 +7,6 @@
 #include <bencode/Decoder.h>
 #include <bencode/bencoding.h>
 #include <crypto/sha1.h>
-#include <loguru/loguru.hpp>
-
 #include "TorrentFileParser.h"
 #define HASH_LEN 20
 
@@ -21,15 +19,11 @@
  */
 TorrentFileParser::TorrentFileParser(const std::string& filePath)
 {
-    LOG_F(INFO, "Parsing Torrent file %s...", filePath.c_str());
     std::ifstream fileStream(filePath, std::ifstream::binary);
     std::shared_ptr<bencoding::BItem> decodedTorrentFile = bencoding::decode(fileStream);
     std::shared_ptr<bencoding::BDictionary> rootDict =
             std::dynamic_pointer_cast<bencoding::BDictionary>(decodedTorrentFile);
     root = rootDict;
-    LOG_F(INFO, "Parse Torrent file: SUCCESS");
-//    std::string prettyRepr = bencoding::getPrettyRepr(decodedTorrentFile);
-//    std::cout << prettyRepr << std::endl;
 }
 
 /**
