@@ -5,7 +5,6 @@
 #include <chrono>
 #include <unistd.h>
 #include <netinet/in.h>
-#include <loguru/loguru.hpp>
 #include <utility>
 
 #include "PeerConnection.h"
@@ -38,12 +37,10 @@ PeerConnection::PeerConnection(
  */
 PeerConnection::~PeerConnection() {
     closeSock();
-    LOG_F(INFO, "Downloading thread terminated");
 }
 
 
 void PeerConnection::start() {
-    LOG_F(INFO, "Downloading thread started...");
     while (!(terminated || pieceManager->isComplete()))
     {
         peer = queue->pop_front();
@@ -106,8 +103,6 @@ void PeerConnection::start() {
         catch (std::exception &e)
         {
             closeSock();
-            LOG_F(ERROR, "An error occurred while downloading from peer %s [%s]", peerId.c_str(), peer->ip.c_str());
-            LOG_F(ERROR, "%s", e.what());
         }
     }
 }
@@ -129,7 +124,6 @@ void PeerConnection::stop()
 void PeerConnection::performHandshake()
 {
     // Connects to the peer
-    LOG_F(INFO, "Connecting to peer [%s]...", peer->ip.c_str());
     try
     {
         sock = createConnection(peer->ip, peer->port);
@@ -138,21 +132,16 @@ void PeerConnection::performHandshake()
     {
         throw std::runtime_error("Cannot connect to peer [" + peer->ip + "]");
     }
-    LOG_F(INFO, "Establish TCP connection with peer at socket %d: SUCCESS", sock);
 
     // Send the handshake message to the peer
-    LOG_F(INFO, "Sending handshake message to [%s]...", peer->ip.c_str());
     std::string handshakeMessage = createHandshakeMessage();
     sendData(sock, handshakeMessage);
-    LOG_F(INFO, "Send handshake message: SUCCESS");
 
     // Receive the reply from the peer
-    LOG_F(INFO, "Receiving handshake reply from peer [%s]...", peer->ip.c_str());
     std::string reply = receiveData(sock, handshakeMessage.length());
     if (reply.empty())
         throw std::runtime_error("Receive handshake from peer: FAILED [No response from peer]");
     peerId = reply.substr(PEER_ID_STARTING_POS, HASH_LEN);
-    LOG_F(INFO, "Receive handshake reply from peer: SUCCESS");
 
     // Compare the info hash from the peer's reply message with the info hash we sent.
     // If the two values are not the same, close the connection and raise an exception.
@@ -160,7 +149,6 @@ void PeerConnection::performHandshake()
     if ((receivedInfoHash == infoHash) != 0)
         throw std::runtime_error("Perform handshake with peer " + peer->ip +
                                  ": FAILED [Received mismatching info hash]");
-    LOG_F(INFO, "Hash comparison: SUCCESS");
 }
 
 /**
@@ -169,7 +157,6 @@ void PeerConnection::performHandshake()
 void PeerConnection::receiveBitField()
 {
     // Receive BitField from the peer
-    LOG_F(INFO, "Receiving BitField message from peer [%s]...", peer->ip.c_str());
     BitTorrentMessage message = receiveMessage();
     if (message.getMessageId() != bitField)
         throw std::runtime_error("Receive BitField from peer: FAILED [Wrong message ID]");
@@ -178,7 +165,6 @@ void PeerConnection::receiveBitField()
     // Informs the PieceManager of the BitField received
     pieceManager->addPeer(peerId, peerBitField);
 
-    LOG_F(INFO, "Receive BitField from peer: SUCCESS");
 }
 
 /**
@@ -209,11 +195,9 @@ void PeerConnection::requestPiece() {
     info << "[Piece: " << std::to_string(block->piece) << " ";
     info << "Offset: " << std::to_string(block->offset) << " ";
     info << "Length: " << std::to_string(block->length) << "]";
-    LOG_F(INFO, "%s", info.str().c_str());
     std::string requestMessage = BitTorrentMessage(request, payload).toString();
     sendData(sock, requestMessage);
     requestPending = true;
-    LOG_F(INFO, "Send Request message: SUCCESS");
 }
 
 
@@ -222,10 +206,8 @@ void PeerConnection::requestPiece() {
  */
 void PeerConnection::sendInterested()
 {
-    LOG_F(INFO, "Sending Interested message to peer [%s]...", peer->ip.c_str());
     std::string interestedMessage = BitTorrentMessage(interested).toString();
     sendData(sock, interestedMessage);
-    LOG_F(INFO, "Send Interested message: SUCCESS");
 }
 
 /**
@@ -233,14 +215,12 @@ void PeerConnection::sendInterested()
  * If the received message does not match the expected Unchoke, raise an error.
  */
 void PeerConnection::receiveUnchoke() {
-    LOG_F(INFO, "Receiving Unchoke message from peer [%s]...", peer->ip.c_str());
     BitTorrentMessage message = receiveMessage();
     if (message.getMessageId() != unchoke)
         throw std::runtime_error(
                 "Receive Unchoke message from peer: FAILED [Wrong message ID: " +
                 std::to_string(message.getMessageId()) + "]");
     choked = false;
-    LOG_F(INFO, "Receive Unchoke message: SUCCESS");
 }
 
 /**
@@ -270,8 +250,6 @@ bool PeerConnection::establishNewConnection() {
     }
     catch (const std::runtime_error& e)
     {
-        LOG_F(ERROR, "An error occurred while connecting with peer [%s]", peer->ip.c_str());
-        LOG_F(ERROR, "%s", e.what());
         return false;
     }
 }
@@ -320,7 +298,6 @@ BitTorrentMessage PeerConnection::receiveMessage(int bufferSize) const {
         return BitTorrentMessage(keepAlive);
     auto messageId = (uint8_t) reply[0];
     std::string payload = reply.substr(1);
-    LOG_F(INFO, "Received message with ID %d from peer [%s]", messageId, peer->ip.c_str());
     return BitTorrentMessage(messageId, payload);
 }
 
@@ -340,7 +317,6 @@ void PeerConnection::closeSock()
     if (sock)
     {
         // Close socket
-        LOG_F(INFO, "Closed connection at socket %d", sock);
         close(sock);
         sock = {};
         requestPending = false;

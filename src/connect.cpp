@@ -9,7 +9,6 @@
 #include <fcntl.h>
 #include <sys/poll.h>
 #include <limits>
-#include <loguru/loguru.hpp>
 #include "connect.h"
 #include "utils.h"
 

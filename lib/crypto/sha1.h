@@ -1,7 +1,3 @@
-//
-// Created by Siyuan Shen on 2021/5/2.
-//
-
 #ifndef BITTORRENTCLIENT_SHA1_H
 #define BITTORRENTCLIENT_SHA1_H
 
