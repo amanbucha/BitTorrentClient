@@ -7,7 +7,7 @@
 #include <unistd.h>
 
 #include "PieceManager.h"
-#include "Block.h"
+#include "block.h"
 #include "utils.h"
 
 #define BLOCK_SIZE 16384              // 2 ^ 14

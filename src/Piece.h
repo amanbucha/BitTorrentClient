@@ -1,7 +1,7 @@
 #ifndef BITTORRENTCLIENT_PIECE_H
 #define BITTORRENTCLIENT_PIECE_H
 
-#include "Block.h"
+#include "block.h"
 
 /**
  * A class representation of a piece of the Torrent content.
